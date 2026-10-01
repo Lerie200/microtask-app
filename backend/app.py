@@ -178,6 +178,11 @@ admin.add_view(TaskAdminView(Task, db.session))
 admin.add_view(SubmissionAdminView(Submission, db.session))
 admin.add_view(PaymentAdminView(Payment, db.session))
 
+# home on render
+@app.route("/")
+def home():
+    return {"message": "Microtask API is running"}
+
 
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
