@@ -1,0 +1,31 @@
+<div class="auth-page-bg">
+<div class="auth-card text-center">
+  <div class="auth-logo">
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="30" fill="#0F766E" />
+      <path d="M20 34 L28 42 L44 24" stroke="#F59E0B" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </div>
+
+  <h3 class="mb-1" style="color: var(--brand-primary); font-weight: 700;">One last step</h3>
+  <p class="text-muted mb-4" style="font-size: 0.9rem;">Pay a one-time activation fee to unlock available tasks.</p>
+
+  <div class="my-4">
+    <span class="display-6 fw-bold" style="color: var(--brand-highlight);">KSh 300</span>
+  </div>
+
+  <div *ngIf="status === 'idle'">
+    <button class="btn btn-brand w-100 py-2" (click)="payNow()">Pay with M-Pesa</button>
+  </div>
+
+  <div *ngIf="status === 'waiting'" class="py-3">
+    <div class="spinner-border mb-3" style="color: var(--brand-primary);" role="status"></div>
+    <p class="text-muted">Check your phone and enter your M-Pesa PIN to complete payment...</p>
+  </div>
+
+  <div *ngIf="status === 'error'" class="alert alert-danger py-2">
+    {{ errorMessage }}
+    <button class="btn btn-sm btn-brand mt-2 w-100" (click)="payNow()">Try Again</button>
+  </div>
+</div>
+</div>

@@ -1,0 +1,138 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+:root {
+  --brand-primary: #0F766E;      /* Teal */
+  --brand-primary-dark: #115E59; /* Dark teal */
+  --brand-bg: #F8FAFC;
+  --brand-card: #FFFFFF;
+  --brand-highlight: #F59E0B;    /* Earnings / highlight */
+  --brand-error: #DC2626;
+  --brand-text: #1E293B;
+
+  /* Kept as aliases so earlier components using --brand-mint still work */
+  --brand-mint: var(--brand-highlight);
+}
+
+body {
+  background-color: var(--brand-bg);
+  color: var(--brand-text);
+  font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+a {
+  color: var(--brand-primary);
+}
+
+.btn-brand {
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: white;
+}
+.btn-brand:hover {
+  background-color: var(--brand-primary-dark);
+  border-color: var(--brand-primary-dark);
+  color: white;
+}
+.btn-brand:disabled {
+  background-color: #94a3b8;
+  border-color: #94a3b8;
+}
+
+.btn-mint,
+.btn-highlight {
+  background-color: var(--brand-highlight);
+  border-color: var(--brand-highlight);
+  color: white;
+}
+.btn-highlight:hover {
+  background-color: #d97706;
+  border-color: #d97706;
+  color: white;
+}
+
+.btn-outline-primary {
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+.btn-outline-primary:hover {
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
+.text-error, .field-error {
+  color: var(--brand-error);
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.alert-danger {
+  background-color: #FEF2F2;
+  border-color: var(--brand-error);
+  color: var(--brand-error);
+}
+
+.form-control:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 0.2rem rgba(15, 118, 110, 0.15);
+}
+
+.form-control.is-invalid {
+  border-color: var(--brand-error);
+}
+
+.auth-card {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 32px;
+  background: var(--brand-card);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(15, 23, 42, 0.18);
+}
+
+.auth-page-bg {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%);
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(255,255,255,0.08) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(245, 158, 11, 0.12) 0%, transparent 40%),
+    linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%);
+}
+
+.auth-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.auth-logo svg {
+  width: 56px;
+  height: 56px;
+}
+
+.task-amount {
+  color: var(--brand-highlight);
+  font-weight: 700;
+}
+
+.task-modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.task-modal-card {
+  background: var(--brand-card);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 380px;
+  width: 90%;
+}

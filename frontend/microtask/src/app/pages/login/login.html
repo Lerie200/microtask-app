@@ -1,0 +1,54 @@
+<div class="auth-page-bg">
+<div class="auth-card">
+  <div class="auth-logo">
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="30" fill="#0F766E" />
+      <path d="M20 34 L28 42 L44 24" stroke="#F59E0B" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </div>
+
+  <h3 class="text-center mb-1" style="color: var(--brand-primary); font-weight: 700;">Welcome back</h3>
+  <p class="text-center text-muted mb-4" style="font-size: 0.9rem;">Log in to continue earning</p>
+
+  <div *ngIf="serverError" class="alert alert-danger py-2">{{ serverError }}</div>
+  <div *ngIf="successMessage" class="alert alert-success py-2 text-center">{{ successMessage }}</div>
+
+  <form *ngIf="!successMessage" (ngSubmit)="onSubmit()" novalidate>
+
+    <div class="mb-3">
+      <label class="form-label">Phone Number</label>
+      <input
+        type="tel"
+        class="form-control"
+        [class.is-invalid]="phoneNumberError"
+        [(ngModel)]="phoneNumber"
+        name="phoneNumber"
+        placeholder="0712345678"
+        (blur)="validatePhoneNumber()"
+        (ngModelChange)="validatePhoneNumber()" />
+      <div class="field-error" *ngIf="phoneNumberError">{{ phoneNumberError }}</div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      <input
+        type="password"
+        class="form-control"
+        [class.is-invalid]="passwordError"
+        [(ngModel)]="password"
+        name="password"
+        (blur)="validatePassword()"
+        (ngModelChange)="validatePassword()" />
+      <div class="field-error" *ngIf="passwordError">{{ passwordError }}</div>
+    </div>
+
+    <button type="submit" class="btn btn-brand w-100 py-2 mt-2" [disabled]="isLoading">
+      {{ isLoading ? 'Logging in...' : 'Log In' }}
+    </button>
+  </form>
+
+  <p class="text-center mt-3 mb-0">
+    Don't have an account? <a routerLink="/register">Register</a>
+  </p>
+</div>
+</div>
