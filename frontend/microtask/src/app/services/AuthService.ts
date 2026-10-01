@@ -7,7 +7,7 @@ import { Observable, tap } from 'rxjs';
 // (e.g. https://microtask-backend.onrender.com/api).
 const API_URL = window.location.hostname === 'localhost'
   ? 'http://127.0.0.1:5000/api'
-  : 'https://microtask-app.onrender.com/';
+    : 'https://microtask-app.onrender.com/api';
 
 interface RegisterPayload {
   full_name: string;
