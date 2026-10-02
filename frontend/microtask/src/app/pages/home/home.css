@@ -1,0 +1,265 @@
+.home-page {
+  background-color: var(--brand-bg);
+  min-height: 100vh;
+}
+
+/* Nav */
+.home-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  background: white;
+  box-shadow: 0 2px 10px rgba(15,23,42,0.06);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-logo {
+  width: 36px;
+  height: 36px;
+}
+
+.nav-title {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--brand-primary);
+}
+
+.nav-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Hero */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 64px 48px;
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%);
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(255,255,255,0.08) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(245, 158, 11, 0.12) 0%, transparent 40%),
+    linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%);
+  color: white;
+  flex-wrap: wrap;
+}
+
+.hero-text {
+  flex: 1 1 420px;
+  max-width: 560px;
+}
+
+.hero-text h1 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.hero-text p {
+  font-size: 1.05rem;
+  opacity: 0.92;
+  margin-bottom: 28px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hero-actions .btn-outline-primary {
+  color: white;
+  border-color: white;
+}
+.hero-actions .btn-outline-primary:hover {
+  background-color: white;
+  color: var(--brand-primary);
+}
+
+.hero-image {
+  flex: 1 1 320px;
+  max-width: 420px;
+}
+
+.hero-image img {
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+
+/* Trust badges */
+.trust-badges {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 32px;
+  padding: 20px 24px;
+  background: white;
+  box-shadow: 0 2px 10px rgba(15,23,42,0.05);
+}
+
+.badge-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--brand-text);
+  font-size: 0.95rem;
+}
+
+/* FAQ */
+.faq {
+  padding: 64px 48px;
+  text-align: center;
+}
+
+.faq h2 {
+  color: var(--brand-primary);
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.faq-item {
+  background: white;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 4px 16px rgba(15,23,42,0.05);
+}
+
+.faq-item h5 {
+  color: var(--brand-primary);
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.faq-item p {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Features */
+.features {
+  padding: 64px 48px;
+  text-align: center;
+}
+
+.features h2 {
+  color: var(--brand-primary);
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  background: white;
+  border-radius: 16px;
+  padding: 28px 20px;
+  box-shadow: 0 4px 20px rgba(15,23,42,0.06);
+}
+
+.feature-icon {
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+}
+
+.feature-card h5 {
+  color: var(--brand-text);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.feature-card p {
+  color: #64748b;
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+/* How it works */
+.how-it-works {
+  padding: 64px 48px;
+  background: white;
+  text-align: center;
+}
+
+.how-it-works h2 {
+  color: var(--brand-primary);
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 32px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.step-number {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--brand-highlight);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin: 0 auto 14px;
+}
+
+.step h5 {
+  color: var(--brand-text);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.step p {
+  color: #64748b;
+  font-size: 0.92rem;
+}
+
+/* Footer */
+.home-footer {
+  text-align: center;
+  padding: 24px;
+  color: #94a3b8;
+  font-size: 0.85rem;
+  background: var(--brand-bg);
+}
+
+@media (max-width: 600px) {
+  .hero { padding: 40px 20px; }
+  .hero-text h1 { font-size: 1.8rem; }
+  .features, .how-it-works { padding: 40px 20px; }
+}
