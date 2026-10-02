@@ -98,6 +98,13 @@
   box-shadow: 0 20px 50px rgba(0,0,0,0.3);
 }
 
+.hero-illustration {
+  width: 100%;
+  max-width: 380px;
+  display: block;
+  margin: 0 auto;
+}
+
 /* Trust badges */
 .trust-badges {
   display: flex;
