@@ -2,12 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
-// Uses your local backend during development, and your deployed backend
-// once this is hosted. Replace YOUR_DEPLOYED_BACKEND_URL once you have it
-// (e.g. https://microtask-backend.onrender.com/api).
 const API_URL = window.location.hostname === 'localhost'
   ? 'http://127.0.0.1:5000/api'
-    : 'https://microtask-app.onrender.com/api';
+  : 'https://microtaskapp.onrender.com/api';
 
 interface RegisterPayload {
   full_name: string;
