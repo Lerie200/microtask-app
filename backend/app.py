@@ -16,7 +16,7 @@ from markupsafe import Markup
 from dotenv import load_dotenv
 
 from db import get_connection, get_dict_cursor
-from mpesa import initiate_stk_push
+from intasend_service import initiate_stk_push
 from models import db, User, Task, Submission, Payment
 
 ACTIVATION_FEE = 300
@@ -33,7 +33,16 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("ADMIN_SESSION_SECRET", "change-this-admin-secret")
-CORS(app)
+CORS(app, resources={
+        r"/api/*": {
+        "origins": [
+            "http://localhost:4200",
+            "http://127.0.0.1:4200",
+            "https://microtask-frontend.onrender.com"
+        ]
+    }
+
+})
 app.config["SWAGGER"] = {
     "title": "Microtask App API",
     "uiversion": 3,
@@ -46,7 +55,7 @@ app.config["SWAGGER"] = {
         }
     }
 }
-swagger = Swagger(app)  # Swagger UI will be available at /apidocs
+swagger = Swagger(app)
 
 # ------------------------------------------------------------------
 # Admin panel setup (Flask-Admin, uses SQLAlchemy on the same DB)
@@ -359,7 +368,7 @@ def login():
 @jwt_required()
 def pay_activate():
     """
-    Trigger an M-Pesa STK Push to pay the KSh 300 activation fee
+    Trigger an M-Pesa STK Push (via IntaSend) to pay the KSh 300 activation fee
     ---
     tags:
       - Payments
@@ -369,7 +378,7 @@ def pay_activate():
       200:
         description: STK Push sent to the user's phone
       400:
-        description: Already activated, or Daraja request failed
+        description: Already activated, or IntaSend request failed
     """
     user_id = int(get_jwt_identity())
 
@@ -394,15 +403,25 @@ def pay_activate():
         payment_id = cur.fetchone()["id"]
         conn.commit()
 
-        daraja_response = initiate_stk_push(
+        intasend_response = initiate_stk_push(
             phone_number=user["phone_number"],
             amount=ACTIVATION_FEE,
-            account_reference=f"activation-{payment_id}",
+            email=f"{user['phone_number']}@microtask.app",  # placeholder — you don't collect email at registration
+            narrative=f"activation-{payment_id}",
         )
+
+        # Store IntaSend's invoice_id so the webhook can match this payment row later
+        invoice_id = intasend_response.get("invoice", {}).get("invoice_id")
+        if invoice_id:
+            cur.execute(
+                "UPDATE payments SET mpesa_receipt = %s WHERE id = %s",
+                (invoice_id, payment_id),
+            )
+            conn.commit()
 
         return jsonify({
             "message": "Check your phone and enter your M-Pesa PIN to complete activation.",
-            "daraja_response": daraja_response
+            "intasend_response": intasend_response
         }), 200
 
     except Exception as e:
@@ -419,7 +438,7 @@ def pay_activate():
 @app.route("/api/payments/callback", methods=["POST"])
 def payment_callback():
     """
-    Safaricom Daraja calls this endpoint automatically after payment
+    IntaSend calls this endpoint automatically after payment
     (not called manually — no Swagger auth needed)
     ---
     tags:
@@ -431,65 +450,58 @@ def payment_callback():
         schema:
           type: object
           example:
-            Body:
-              stkCallback:
-                MerchantRequestID: "29115-34620561-1"
-                CheckoutRequestID: "ws_CO_191220191020363925"
-                ResultCode: 0
-                ResultDesc: "The service request is processed successfully."
-                CallbackMetadata:
-                  Item:
-                    - Name: Amount
-                      Value: 300
-                    - Name: MpesaReceiptNumber
-                      Value: NLJ7RT61SV
-                    - Name: TransactionDate
-                      Value: 20260926234400
-                    - Name: PhoneNumber
-                      Value: 254708374149
+            invoice_id: "DMO2PR9"
+            state: "COMPLETE"
+            provider: "M-PESA"
+            charges: "0.00"
+            net_amount: "300.00"
+            currency: "KES"
+            value: "300.00"
+            account: "254708374149"
+            api_ref: "activation-12"
     responses:
       200:
         description: Callback received
     """
     data = request.get_json(force=True)
-    print("DARAJA CALLBACK RECEIVED:", data)  # helpful for debugging in your terminal
+    CHALLENGE_SECRET = os.getenv("INTASEND_CHALLENGE_SECRET")
+    if data.get("challenge") != CHALLENGE_SECRET:
+        print("Webhook challenge mismatch — rejecting.")
+        return jsonify({"error": "Invalid challenge"}), 403
+
+
+    print("INTASEND CALLBACK RECEIVED:", data)  # helpful for debugging in your terminal
 
     try:
-        stk_callback = data["Body"]["stkCallback"]
-        result_code = stk_callback["ResultCode"]
+        invoice_id = data.get("invoice_id")
+        state = data.get("state")  # PENDING / COMPLETE / FAILED / PROCESSING
 
         conn = get_connection()
         cur = get_dict_cursor(conn)
 
-        if result_code == 0:
-            # Payment succeeded — extract the M-Pesa receipt number and amount
-            items = stk_callback["CallbackMetadata"]["Item"]
-            metadata = {item["Name"]: item.get("Value") for item in items}
-            mpesa_receipt = metadata.get("MpesaReceiptNumber")
-            amount_paid = metadata.get("Amount")
-            phone = metadata.get("PhoneNumber")
-
-            # Find the matching user by phone and activate them
+        if state == "COMPLETE":
+            # Find the payment row by the invoice_id we stored when initiating the push
             cur.execute(
-                "SELECT id FROM users WHERE phone_number LIKE %s",
-                (f"%{str(phone)[-9:]}",),  # match last 9 digits regardless of prefix format
+                "SELECT user_id FROM payments WHERE mpesa_receipt = %s",
+                (invoice_id,),
             )
-            user = cur.fetchone()
+            payment = cur.fetchone()
 
-            if user:
-                cur.execute("UPDATE users SET is_activated = TRUE WHERE id = %s", (user["id"],))
+            if payment:
                 cur.execute(
-                    """
-                    UPDATE payments SET status = 'success', mpesa_receipt = %s
-                    WHERE user_id = %s AND status = 'pending'
-                    """,
-                    (mpesa_receipt, user["id"]),
+                    "UPDATE users SET is_activated = TRUE WHERE id = %s",
+                    (payment["user_id"],),
+                )
+                cur.execute(
+                    "UPDATE payments SET status = 'success' WHERE mpesa_receipt = %s",
+                    (invoice_id,),
                 )
                 conn.commit()
-        else:
-            # Payment failed or was cancelled by the user
+
+        elif state == "FAILED":
             cur.execute(
-                "UPDATE payments SET status = 'failed' WHERE status = 'pending'"
+                "UPDATE payments SET status = 'failed' WHERE mpesa_receipt = %s",
+                (invoice_id,),
             )
             conn.commit()
 
@@ -497,11 +509,10 @@ def payment_callback():
         conn.close()
 
     except (KeyError, TypeError) as e:
-        print("Error parsing Daraja callback:", e)
+        print("Error parsing IntaSend callback:", e)
 
-    # Always return 200 to Safaricom, or it will retry the callback repeatedly
-    return jsonify({"ResultCode": 0, "ResultDesc": "Callback received"}), 200
-
+    # Always return 200, or IntaSend will retry the callback repeatedly
+    return jsonify({"message": "Callback received"}), 200
 
 
 @app.route("/api/tasks", methods=["GET"])
