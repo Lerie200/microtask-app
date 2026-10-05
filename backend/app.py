@@ -19,7 +19,7 @@ from db import get_connection, get_dict_cursor
 from intasend_service import initiate_stk_push
 from models import db, User, Task, Submission, Payment
 
-ACTIVATION_FEE = 300
+ACTIVATION_FEE = 10
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
