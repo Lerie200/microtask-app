@@ -270,3 +270,42 @@
   .hero-text h1 { font-size: 1.8rem; }
   .features, .how-it-works { padding: 40px 20px; }
 }
+.nav-contact {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  align-items: center;
+}
+
+.nav-contact a {
+  color: var(--text-color, #1E293B);
+  text-decoration: none;
+}
+
+.nav-contact a:hover {
+  color: var(--brand-primary, #0F766E);
+}
+
+.footer-contact {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.footer-contact a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.footer-contact a:hover {
+  text-decoration: underline;
+}
+
+/* Hide nav contact on small screens to avoid crowding */
+@media (max-width: 768px) {
+  .nav-contact {
+    display: none;
+  }
+}
