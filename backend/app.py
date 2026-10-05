@@ -19,7 +19,7 @@ from db import get_connection, get_dict_cursor
 from intasend_service import initiate_stk_push
 from models import db, User, Task, Submission, Payment
 
-ACTIVATION_FEE = 10
+ACTIVATION_FEE = 1
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -368,7 +368,7 @@ def login():
 @jwt_required()
 def pay_activate():
     """
-    Trigger an M-Pesa STK Push (via IntaSend) to pay the KSh 300 activation fee
+    Trigger an M-Pesa STK Push (via IntaSend) to pay the KSh 1 activation fee
     ---
     tags:
       - Payments
@@ -454,7 +454,7 @@ def payment_callback():
             state: "COMPLETE"
             provider: "M-PESA"
             charges: "0.00"
-            net_amount: "300.00"
+            net_amount: "1.00"
             currency: "KES"
             value: "300.00"
             account: "254708374149"
@@ -486,6 +486,7 @@ def payment_callback():
                 (invoice_id,),
             )
             payment = cur.fetchone()
+            print(f"DEBUG: looked up invoice_id={invoice_id!r}, found: {payment}")
 
             if payment:
                 cur.execute(
@@ -496,7 +497,11 @@ def payment_callback():
                     "UPDATE payments SET status = 'success' WHERE mpesa_receipt = %s",
                     (invoice_id,),
                 )
+                print(f"DEBUG: rows updated in payments: {cur.rowcount}")
                 conn.commit()
+            else:
+                print("DEBUG: no matching payment row — update skipped")
+
 
         elif state == "FAILED":
             cur.execute(
