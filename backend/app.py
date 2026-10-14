@@ -16,10 +16,10 @@ from markupsafe import Markup
 from dotenv import load_dotenv
 
 from db import get_connection, get_dict_cursor
-from intasend_service import initiate_stk_push
 from models import db, User, Task, Submission, Payment
 
 ACTIVATION_FEE = 1
+TILL_NUMBER = os.getenv("TILL_NUMBER", "1607584") 
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -177,9 +177,31 @@ class UserAdminView(SecureModelView):
 class TaskAdminView(SecureModelView):
     column_list = ("id", "title", "task_type", "reward_amount", "is_active")
 
-
 class PaymentAdminView(SecureModelView):
-    column_list = ("id", "user", "amount", "mpesa_receipt", "status", "created_at")
+    column_list = ("id", "user", "amount", "payment_message", "status", "created_at")
+    column_editable_list = ("status",)  # approve/reject inline from the list view
+    form_columns = ("status",)
+    form_choices = {
+        "status": [
+            ("pending", "Pending"),
+            ("approved", "Approved"),
+            ("rejected", "Rejected"),
+        ]
+    }
+
+    def _message_formatter(view, context, model, name):
+        if not model.payment_message:
+            return ""
+        short = model.payment_message[:80] + ("…" if len(model.payment_message) > 80 else "")
+        return Markup(f'<span title="{model.payment_message}">{short}</span>')
+
+    column_formatters = {"payment_message": _message_formatter}
+
+    def on_model_change(self, form, model, is_created):
+        if model.status == "approved":
+            model.user.is_activated = True
+        super().on_model_change(form, model, is_created)
+
 
 
 admin = Admin(app, name="Microtask Admin", template_mode="bootstrap4", index_view=SecureAdminIndexView())
@@ -365,11 +387,11 @@ def login():
 # ------------------------------------------------------------------
 # Trigger the activation payment (STK Push)
 # ------------------------------------------------------------------
-@app.route("/api/pay/activate", methods=["POST"])
+@app.route("/api/pay/info", methods=["GET"])
 @jwt_required()
-def pay_activate():
+def pay_info():
     """
-    Trigger an M-Pesa STK Push (via IntaSend) to pay the KSh 1 activation fee
+    Get the till number, activation fee, and current activation status
     ---
     tags:
       - Payments
@@ -377,148 +399,86 @@ def pay_activate():
       - Bearer: []
     responses:
       200:
-        description: STK Push sent to the user's phone
-      400:
-        description: Already activated, or IntaSend request failed
+        description: Till payment details
     """
     user_id = int(get_jwt_identity())
-
     conn = get_connection()
     cur = get_dict_cursor(conn)
-
     try:
-        cur.execute("SELECT phone_number, is_activated FROM users WHERE id = %s", (user_id,))
+        cur.execute("SELECT is_activated FROM users WHERE id = %s", (user_id,))
         user = cur.fetchone()
-
         if not user:
             return jsonify({"error": "User not found."}), 404
 
-        if user["is_activated"]:
-            return jsonify({"message": "Account is already activated."}), 200
-
-        # Record a pending payment row first, so the callback has something to update
-        cur.execute(
-            "INSERT INTO payments (user_id, amount, status) VALUES (%s, %s, 'pending') RETURNING id",
-            (user_id, ACTIVATION_FEE),
-        )
-        payment_id = cur.fetchone()["id"]
-        conn.commit()
-
-        intasend_response = initiate_stk_push(
-            phone_number=user["phone_number"],
-            amount=ACTIVATION_FEE,
-            email=f"{user['phone_number']}@microtask.app",  # placeholder — you don't collect email at registration
-            narrative=f"activation-{payment_id}",
-        )
-
-        # Store IntaSend's invoice_id so the webhook can match this payment row later
-        invoice_id = intasend_response.get("invoice", {}).get("invoice_id")
-        if invoice_id:
-            cur.execute(
-                "UPDATE payments SET mpesa_receipt = %s WHERE id = %s",
-                (invoice_id, payment_id),
-            )
-            conn.commit()
-
         return jsonify({
-            "message": "Check your phone and enter your M-Pesa PIN to complete activation.",
-            "intasend_response": intasend_response
+            "till_number": TILL_NUMBER,
+            "amount": float(ACTIVATION_FEE),
+            "is_activated": user["is_activated"],
         }), 200
-
-    except Exception as e:
-        return jsonify({"error": f"Failed to initiate payment: {str(e)}"}), 400
-
     finally:
         cur.close()
         conn.close()
 
 
-# ------------------------------------------------------------------
-# Daraja calls this automatically after the user approves/cancels
-# ------------------------------------------------------------------
-@app.route("/api/payments/callback", methods=["POST"])
-def payment_callback():
+@app.route("/api/pay/submit-confirmation", methods=["POST"])
+@jwt_required()
+def submit_payment_confirmation():
     """
-    IntaSend calls this endpoint automatically after payment
-    (not called manually — no Swagger auth needed)
+    Submit a pasted M-Pesa confirmation message for manual admin review
     ---
     tags:
       - Payments
+    security:
+      - Bearer: []
     parameters:
       - in: body
         name: body
         required: true
         schema:
           type: object
-          example:
-            invoice_id: "DMO2PR9"
-            state: "COMPLETE"
-            provider: "M-PESA"
-            charges: "0.00"
-            net_amount: "1.00"
-            currency: "KES"
-            value: "300.00"
-            account: "254708374149"
-            api_ref: "activation-12"
+          properties:
+            message:
+              type: string
+              example: "QWE1RTY2UI Confirmed. Ksh10.00 sent to MICROEARN LTD on 14/10/26 at 1:15 PM"
     responses:
       200:
-        description: Callback received
+        description: Confirmation submitted, pending admin review
+      400:
+        description: Already activated, or message missing
     """
+    user_id = int(get_jwt_identity())
     data = request.get_json(force=True)
-    CHALLENGE_SECRET = os.getenv("INTASEND_CHALLENGE_SECRET")
-    if data.get("challenge") != CHALLENGE_SECRET:
-        print("Webhook challenge mismatch — rejecting.")
-        return jsonify({"error": "Invalid challenge"}), 403
+    message = (data.get("message") or "").strip()
 
+    if not message:
+        return jsonify({"error": "Please paste your M-Pesa confirmation message."}), 400
 
-    print("INTASEND CALLBACK RECEIVED:", data)  # helpful for debugging in your terminal
-
+    conn = get_connection()
+    cur = get_dict_cursor(conn)
     try:
-        invoice_id = data.get("invoice_id")
-        state = data.get("state")  # PENDING / COMPLETE / FAILED / PROCESSING
+        cur.execute("SELECT is_activated FROM users WHERE id = %s", (user_id,))
+        user = cur.fetchone()
+        if not user:
+            return jsonify({"error": "User not found."}), 404
+        if user["is_activated"]:
+            return jsonify({"message": "Account is already activated."}), 200
 
-        conn = get_connection()
-        cur = get_dict_cursor(conn)
+        cur.execute(
+            """
+            INSERT INTO payments (user_id, amount, status, payment_message)
+            VALUES (%s, %s, 'pending', %s)
+            """,
+            (user_id, ACTIVATION_FEE, message),
+        )
+        conn.commit()
 
-        if state == "COMPLETE":
-            # Find the payment row by the invoice_id we stored when initiating the push
-            cur.execute(
-                "SELECT user_id FROM payments WHERE mpesa_receipt = %s",
-                (invoice_id,),
-            )
-            payment = cur.fetchone()
-            print(f"DEBUG: looked up invoice_id={invoice_id!r}, found: {payment}")
-
-            if payment:
-                cur.execute(
-                    "UPDATE users SET is_activated = TRUE WHERE id = %s",
-                    (payment["user_id"],),
-                )
-                cur.execute(
-                    "UPDATE payments SET status = 'success' WHERE mpesa_receipt = %s",
-                    (invoice_id,),
-                )
-                print(f"DEBUG: rows updated in payments: {cur.rowcount}")
-                conn.commit()
-            else:
-                print("DEBUG: no matching payment row — update skipped")
-
-
-        elif state == "FAILED":
-            cur.execute(
-                "UPDATE payments SET status = 'failed' WHERE mpesa_receipt = %s",
-                (invoice_id,),
-            )
-            conn.commit()
-
+        return jsonify({
+            "message": "Thanks! Your payment is being reviewed. You'll be redirected once approved."
+        }), 200
+    finally:
         cur.close()
         conn.close()
 
-    except (KeyError, TypeError) as e:
-        print("Error parsing IntaSend callback:", e)
-
-    # Always return 200, or IntaSend will retry the callback repeatedly
-    return jsonify({"message": "Callback received"}), 200
 
 
 @app.route("/api/tasks", methods=["GET"])

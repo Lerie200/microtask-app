@@ -8,24 +8,49 @@
   </div>
 
   <h3 class="mb-1" style="color: var(--brand-primary); font-weight: 700;">One last step</h3>
-  <p class="text-muted mb-4" style="font-size: 0.9rem;">Pay a one-time activation fee to unlock available tasks.</p>
+  <p class="text-muted mb-4" style="font-size: 0.9rem;">Pay the one-time activation fee via M-Pesa Till, then paste your confirmation message below.</p>
 
-  <div class="my-4">
-    <span class="display-6 fw-bold" style="color: var(--brand-highlight);">KSh 1</span>
+  <div *ngIf="status === 'loading'" class="py-3">
+    <div class="spinner-border" style="color: var(--brand-primary);" role="status"></div>
   </div>
 
-  <div *ngIf="status === 'idle'">
-    <button class="btn btn-brand w-100 py-2" (click)="payNow()">Pay with M-Pesa</button>
+  <div *ngIf="status === 'idle' || status === 'submitting'">
+    <div class="my-3 p-3" style="background: #F8FAFC; border-radius: 10px; border: 1px solid #E2E8F0;">
+      <div class="text-muted" style="font-size: 0.85rem;">Till Number</div>
+      <div class="fw-bold" style="font-size: 1.4rem; color: var(--brand-primary);">{{ tillNumber }}</div>
+      <div class="text-muted mt-2" style="font-size: 0.85rem;">Amount</div>
+      <div class="fw-bold" style="font-size: 1.2rem; color: var(--brand-highlight);">KSh {{ amount }}</div>
+    </div>
+
+    <p class="text-muted text-start" style="font-size: 0.85rem;">
+      Go to M-Pesa → Lipa na M-Pesa → Buy Goods and Services → enter the till number and amount above.
+      Once paid, copy the full confirmation SMS from M-Pesa and paste it below.
+    </p>
+
+    <textarea
+      class="form-control mb-3"
+      rows="4"
+      placeholder="Paste your M-Pesa confirmation message here..."
+      [(ngModel)]="confirmationMessage"
+      name="confirmationMessage"
+      [disabled]="status === 'submitting'"
+    ></textarea>
+
+    <div *ngIf="errorMessage" class="alert alert-danger py-2" style="font-size: 0.85rem;">{{ errorMessage }}</div>
+
+    <button class="btn btn-brand w-100 py-2" (click)="submitConfirmation()" [disabled]="status === 'submitting'">
+      {{ status === 'submitting' ? 'Submitting...' : 'Submit for Verification' }}
+    </button>
   </div>
 
   <div *ngIf="status === 'waiting'" class="py-3">
     <div class="spinner-border mb-3" style="color: var(--brand-primary);" role="status"></div>
-    <p class="text-muted">Check your phone and enter your M-Pesa PIN to complete payment...</p>
+    <p class="text-muted">You'll be directed soon — waiting for approval...</p>
   </div>
 
-  <div *ngIf="status === 'error'" class="alert alert-danger py-2">
+  <div *ngIf="status === 'error' && !tillNumber" class="alert alert-danger py-2">
     {{ errorMessage }}
-    <button class="btn btn-sm btn-brand mt-2 w-100" (click)="payNow()">Try Again</button>
+    <button class="btn btn-sm btn-brand mt-2 w-100" (click)="ngOnInit()">Try Again</button>
   </div>
 </div>
 </div>

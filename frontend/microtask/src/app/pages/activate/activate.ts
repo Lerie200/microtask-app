@@ -1,35 +1,68 @@
-import { Component, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/AuthService';
+
 @Component({
   selector: 'app-activate',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './activate.html',
   styleUrl: './activate.css'
 })
-export class ActivateComponent implements OnDestroy {
-  status: 'idle' | 'waiting' | 'error' = 'idle';
+export class ActivateComponent implements OnInit, OnDestroy {
+  status: 'loading' | 'idle' | 'submitting' | 'waiting' | 'error' = 'loading';
   errorMessage = '';
+  tillNumber = '';
+  amount = 0;
+  confirmationMessage = '';
+
   private pollHandle: any;
 
   constructor(private authService: AuthService, private router: Router, private cdr: ChangeDetectorRef) {}
 
-  payNow(): void {
-    this.status = 'waiting';
+  ngOnInit(): void {
+    this.authService.getPayInfo().subscribe({
+      next: (res) => {
+        if (res.is_activated) {
+          this.router.navigate(['/tasks']);
+          return;
+        }
+        this.tillNumber = res.till_number;
+        this.amount = res.amount;
+        this.status = 'idle';
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.status = 'error';
+        this.errorMessage = 'Could not load payment details. Please refresh and try again.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  submitConfirmation(): void {
+    if (!this.confirmationMessage.trim()) {
+      this.errorMessage = 'Please paste your M-Pesa confirmation message.';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.status = 'submitting';
     this.errorMessage = '';
     this.cdr.detectChanges();
 
-    this.authService.payActivate().subscribe({
+    this.authService.submitPaymentConfirmation(this.confirmationMessage.trim()).subscribe({
       next: () => {
-        // STK push accepted — now poll /api/tasks every 4s;
-        // once it stops returning 403, the account is activated.
-        this.pollHandle = setInterval(() => this.checkActivation(), 4000);
+        this.status = 'waiting';
+        this.cdr.detectChanges();
+        // Poll every 5s to check if admin has approved the payment yet
+        this.pollHandle = setInterval(() => this.checkActivation(), 5000);
       },
       error: (err) => {
         this.status = 'error';
-        this.errorMessage = err.error?.error || 'Could not start payment. Please try again.';
+        this.errorMessage = err.error?.error || 'Could not submit confirmation. Please try again.';
         this.cdr.detectChanges();
       }
     });
@@ -44,7 +77,7 @@ export class ActivateComponent implements OnDestroy {
         this.router.navigate(['/tasks']);
       },
       error: () => {
-        // still 403 — keep waiting, do nothing
+        // still pending approval — keep waiting
       }
     });
   }

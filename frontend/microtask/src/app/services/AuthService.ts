@@ -35,14 +35,19 @@ export class AuthService {
       })
     );
   }
+  getPayInfo(): Observable<any> {
+    return this.http.get(`${API_URL}/pay/info`, { headers: this.authHeaders() });
+  }
 
-  payActivate(): Observable<any> {
-    return this.http.post(`${API_URL}/pay/activate`, {}, { headers: this.authHeaders() });
+  submitPaymentConfirmation(message: string): Observable<any> {
+    return this.http.post(`${API_URL}/pay/submit-confirmation`, { message }, { headers: this.authHeaders() });
   }
 
   getTasks(): Observable<any> {
     return this.http.get(`${API_URL}/tasks`, { headers: this.authHeaders() });
   }
+
+
 
   submitTask(taskId: number, file: File | null, answerText: string | null): Observable<any> {
     const formData = new FormData();
