@@ -22,8 +22,15 @@
   overflow: hidden;
 }
 
-.home-page a {
-  text-decoration: none;
+.home-page {
+  --brand-dark: #084E49;
+  --brand-light: #BCE9DC;
+  --surface: #EAF5F1;
+  --ink: #123C38;
+  --muted: #526E69;
+
+  background: #EAF5F1;
+  color: var(--ink);
 }
 
 .home-nav {
