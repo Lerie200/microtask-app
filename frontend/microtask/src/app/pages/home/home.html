@@ -1,140 +1,425 @@
+
 <div class="home-page">
 
-  <!-- Nav bar -->
+  <!-- Navigation -->
   <nav class="home-nav">
-    <div class="nav-brand">
-      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" class="nav-logo">
-        <circle cx="32" cy="32" r="30" fill="#0F766E" />
-        <path d="M20 34 L28 42 L44 24" stroke="#F59E0B" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+    <a routerLink="/" class="nav-brand" aria-label="MicroEarn Home">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"
+           class="nav-logo" aria-hidden="true">
+        <circle cx="32" cy="32" r="30" fill="#0F766E"/>
+        <path d="M20 34 L28 42 L44 24"
+              stroke="#F59E0B" stroke-width="5"
+              fill="none" stroke-linecap="round"
+              stroke-linejoin="round"/>
       </svg>
       <span class="nav-title">MicroEarn</span>
+    </a>
+
+    <button class="mobile-menu-toggle"
+            type="button"
+            aria-label="Open registration"
+            routerLink="/register">
+      Get Started
+    </button>
+
+    <div class="nav-links">
+      <a href="#how-it-works">How It Works</a>
+      <a href="#features">Explore Tasks</a>
+      <a href="#faq">FAQs</a>
     </div>
+    
     <div class="nav-contact">
-      <a href="tel:+254769132565">📞 0769 132 565</a>
-      <a href="mailto:john60.michael@gmail.com">✉️ john60.michael@gmail.com</a>
+      <a href="tel:+254769132565">
+        <span>☎</span> 0769 132 565
+      </a>
+      <a href="mailto:john60.michael@gmail.com">
+        <span>✉</span> john60.michael@gmail.com
+      </a>
     </div>
+
     <div class="nav-actions">
-      <a routerLink="/login" class="btn btn-outline-primary btn-sm">Log In</a>
-      <a routerLink="/register" class="btn btn-brand btn-sm">Sign Up</a>
+      <a routerLink="/login" class="btn-login">Log In</a>
+      <a routerLink="/register" class="btn-brand btn-nav">
+        Join Free <span aria-hidden="true">→</span>
+      </a>
     </div>
   </nav>
 
-  <!-- Hero -->
+  <!-- Hero Section -->
   <section class="hero">
-    <div class="hero-text">
-      <h1>Ready to earn from the comfort of your home?</h1>
-      <p>
-        All you need is a smartphone and a reliable internet connection. Take a
-        photo, record your voice, or answer a few simple questions to help
-        train AI systems — simple, flexible tasks you can do anytime.
+    <div class="hero-content">
+      <div class="hero-tag">
+        <span class="status-dot"></span>
+        SIMPLE TASKS. FLEXIBLE OPPORTUNITIES.
+      </div>
+
+      <h1>
+        Your time.
+        <span>Your skills.</span>
+        <span class="highlight-text">Your earnings.</span>
+      </h1>
+
+      <p class="hero-description">
+        Turn your spare time into an opportunity. Complete simple online
+        tasks, contribute to useful digital projects, and track your
+        progress from one convenient dashboard.
       </p>
+
       <div class="hero-actions">
-        <a routerLink="/register" class="btn btn-brand btn-lg">Get Started</a>
-        <a routerLink="/login" class="btn btn-outline-primary btn-lg">I already have an account</a>
+        <a routerLink="/register" class="btn-brand btn-hero">
+          Get Started <span aria-hidden="true">→</span>
+        </a>
+
+        <a routerLink="/login" class="btn-secondary btn-hero">
+          Welcome Back <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+
+      <div class="hero-note">
+        <span class="note-check">✓</span>
+        <span>Flexible participation</span>
+        <span class="note-divider">•</span>
+        <span>Track your progress</span>
       </div>
     </div>
-    <div class="hero-image">
-      <img
-        src="https://images.unsplash.com/photo-1510217882301-9ea28fd4f217?w=600&h=700&fit=crop&auto=format"
-        alt="Person holding a smartphone" />
+
+    <div class="hero-visual">
+      <div class="hero-image-wrap">
+        <img
+          src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1000&h=1000&fit=crop&auto=format"
+          alt="Person working on a laptop"
+          class="hero-image"
+          fetchpriority="high"
+        />
+
+        <div class="floating-card task-card">
+          <div class="floating-icon">✓</div>
+          <div>
+            <strong>Task completed</strong>
+            <span>Progress updated</span>
+          </div>
+        </div>
+
+        <div class="floating-card community-card">
+          <div class="community-icon">✦</div>
+          <div>
+            <strong>One task at a time</strong>
+            <span>Build your progress</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-decoration decoration-one"></div>
+      <div class="hero-decoration decoration-two"></div>
     </div>
   </section>
 
-  <!-- Trust badges -->
-  <section class="trust-badges">
-    <div class="badge-item">⏰ <span>Flexible hours</span></div>
-    <div class="badge-item">🎓 <span>No experience needed</span></div>
-    <div class="badge-item">🔒 <span>Secure M-Pesa payments</span></div>
-    <div class="badge-item">⚡ <span>Simple sign-up</span></div>
+  <!-- Benefits Strip -->
+  <section class="benefits-strip" aria-label="Platform benefits">
+    <div class="benefit-item">
+      <span class="benefit-icon">◷</span>
+      <div>
+        <strong>Flexible</strong>
+        <span>Work at your pace</span>
+      </div>
+    </div>
+
+    <div class="benefit-item">
+      <span class="benefit-icon">◎</span>
+      <div>
+        <strong>Simple Tasks</strong>
+        <span>Clear task instructions</span>
+      </div>
+    </div>
+
+    <div class="benefit-item">
+      <span class="benefit-icon">▣</span>
+      <div>
+        <strong>M-Pesa Support</strong>
+        <span>Convenient payments</span>
+      </div>
+    </div>
+
+    <div class="benefit-item">
+      <span class="benefit-icon">↗</span>
+      <div>
+        <strong>Track Progress</strong>
+        <span>Follow your activity</span>
+      </div>
+    </div>
   </section>
 
   <!-- Features -->
-  <section class="features">
-    <h2>Simple tasks. Real earnings.</h2>
+  <section class="features section-padding" id="features">
+    <div class="section-heading">
+      <span class="section-eyebrow">WHAT YOU CAN DO</span>
+      <h2>Small tasks. <span>New possibilities.</span></h2>
+      <p>
+        Explore different kinds of tasks and find available opportunities
+        that fit your time and interests.
+      </p>
+    </div>
+
     <div class="feature-grid">
 
-      <div class="feature-card">
-        <div class="feature-icon">📸</div>
-        <h5>Take Photos</h5>
-        <p>Snap pictures of objects, receipts, signs, or places around you.</p>
+      <article class="feature-card">
+        <div class="feature-icon photo-icon">▧</div>
+        <span class="feature-number">01</span>
+        <h3>Photo Tasks</h3>
+        <p>
+          Submit requested photos of everyday objects and other items
+          according to each task's instructions.
+        </p>
+        <a routerLink="/register" class="feature-link">
+          Explore opportunities <span>→</span>
+        </a>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon voice-icon">♫</div>
+        <span class="feature-number">02</span>
+        <h3>Voice Tasks</h3>
+        <p>
+          Record requested words, sentences, or short voice samples
+          when suitable tasks are available.
+        </p>
+        <a routerLink="/register" class="feature-link">
+          Explore opportunities <span>→</span>
+        </a>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon image-icon">▦</div>
+        <span class="feature-number">03</span>
+        <h3>Image & Data Tasks</h3>
+        <p>
+          Help with simple classification, image selection, counting,
+          and other guided data activities.
+        </p>
+        <a routerLink="/register" class="feature-link">
+          Explore opportunities <span>→</span>
+        </a>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon earning-icon">↗</div>
+        <span class="feature-number">04</span>
+        <h3>Track Your Earnings</h3>
+        <p>
+          Keep track of task submissions, approved work, and payment
+          information through your account.
+        </p>
+        <a routerLink="/login" class="feature-link">
+          Open your account <span>→</span>
+        </a>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works section-padding" id="how-it-works">
+    <div class="how-content">
+      <span class="section-eyebrow">GETTING STARTED</span>
+      <h2>A simple way to <span>get started.</span></h2>
+      <p class="how-description">
+        Create your account, follow the onboarding steps, and explore
+        available tasks from your dashboard.
+      </p>
+
+      <a routerLink="/register" class="btn-brand btn-hero">
+        Create Your Account <span>→</span>
+      </a>
+    </div>
+
+    <div class="steps-list">
+
+      <div class="step-item">
+        <div class="step-number">01</div>
+        <div class="step-content">
+          <h3>Create your account</h3>
+          <p>
+            Register with your details and use your account to access
+            the platform.
+          </p>
+        </div>
       </div>
 
-      <div class="feature-card">
-        <div class="feature-icon">🎙️</div>
-        <h5>Record Your Voice</h5>
-        <p>Read a short sentence or a quick everyday conversation aloud.</p>
+      <div class="step-connector"></div>
+
+      <div class="step-item">
+        <div class="step-number">02</div>
+        <div class="step-content">
+          <h3>Complete activation</h3>
+          <p>
+            Follow the activation instructions shown in your account.
+            If a fee is required, review the amount and payment details
+            before confirming through M-Pesa.
+          </p>
+        </div>
       </div>
 
-      <div class="feature-card">
-        <div class="feature-icon">🖼️</div>
-        <h5>Look & Choose</h5>
-        <p>Select, rate, count, or categorize simple pictures and sounds.</p>
-      </div>
+      <div class="step-connector"></div>
 
-      <div class="feature-card">
-        <div class="feature-icon">💸</div>
-        <h5>Get Paid via M-Pesa</h5>
-        <p>Your earnings are tracked right in the app, task by task.</p>
+      <div class="step-item">
+        <div class="step-number">03</div>
+        <div class="step-content">
+          <h3>Explore available tasks</h3>
+          <p>
+            Sign in, review the instructions and rewards for available
+            tasks, and submit your work for review.
+          </p>
+        </div>
       </div>
 
     </div>
   </section>
 
-  <!-- How it works -->
-  <section class="how-it-works">
-    <h2>How it works</h2>
-    <div class="steps-grid">
-      <div class="step">
-        <div class="step-number">1</div>
-        <h5>Sign Up</h5>
-        <p>Register with your name and phone number in under a minute.</p>
+  <!-- Account CTA -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <div class="cta-decoration">✦</div>
+      <span class="section-eyebrow">YOUR NEXT STEP STARTS HERE</span>
+      <h2>Ready to explore MicroEarn?</h2>
+      <p>
+        Create your account and discover the opportunities available
+        to you.
+      </p>
+
+      <div class="cta-actions">
+        <a routerLink="/register" class="btn-cta-primary">
+          Join MicroEarn <span>→</span>
+        </a>
+        <a routerLink="/login" class="btn-cta-secondary">
+          Already registered? Log in
+        </a>
       </div>
-      <div class="step">
-        <div class="step-number">2</div>
-        <h5>Activate</h5>
-        <p>Pay a small one-time activation fee via M-Pesa to unlock tasks.</p>
-      </div>
-      <div class="step">
-        <div class="step-number">3</div>
-        <h5>Start Earning</h5>
-        <p>Complete tasks at your own pace, right from your phone.</p>
-      </div>
-    </div>
-    <div class="text-center mt-4">
-      <a routerLink="/register" class="btn btn-brand btn-lg">Join Now</a>
     </div>
   </section>
 
   <!-- FAQ -->
-  <section class="faq">
-    <h2>Frequently Asked Questions</h2>
+  <section class="faq section-padding" id="faq">
+    <div class="section-heading">
+      <span class="section-eyebrow">NEED TO KNOW</span>
+      <h2>Frequently asked <span>questions.</span></h2>
+      <p>Find answers to common questions about using MicroEarn.</p>
+    </div>
+
     <div class="faq-grid">
-      <div class="faq-item">
-        <h5>What kind of tasks will I do?</h5>
-        <p>Simple, everyday actions like taking a photo, recording a short voice clip, or picking the right option from a few choices — all used to help train AI systems.</p>
-      </div>
-      <div class="faq-item">
-        <h5>How do I get paid?</h5>
-        <p>Each task shows its own reward amount upfront. Your submissions are reviewed, and approved tasks count toward your earnings, tracked right in your dashboard.</p>
-      </div>
-      <div class="faq-item">
-        <h5>What do I need to get started?</h5>
-        <p>Just a smartphone, a reliable internet connection, and an M-Pesa line for the one-time activation step.</p>
-      </div>
-      <div class="faq-item">
-        <h5>Is my data safe?</h5>
-        <p>Your photos and recordings are only used for the specific task you submit them for.</p>
-      </div>
+
+      <details class="faq-item">
+        <summary>What kind of tasks can I complete?</summary>
+        <p>
+          Depending on availability, tasks may include photo submissions,
+          voice recordings, image selection, classification, and other
+          simple data activities. Each task provides its own instructions.
+        </p>
+      </details>
+
+      <details class="faq-item">
+        <summary>How do I get paid?</summary>
+        <p>
+          Review the reward and requirements shown for each task.
+          Submitted work may need approval before earnings are credited.
+          Check your account for the current payment and withdrawal rules.
+        </p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Is there an activation fee?</summary>
+        <p>
+          If your account requires activation, the applicable fee and
+          payment instructions should be displayed before payment.
+          Review these details carefully before confirming.
+        </p>
+      </details>
+
+      <details class="faq-item">
+        <summary>What do I need to get started?</summary>
+        <p>
+          You need an account, an internet connection, and a suitable
+          device for the tasks you choose. Some tasks may require access
+          to a phone camera, microphone, or M-Pesa.
+        </p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Can I access my account later?</summary>
+        <p>
+          Yes. Use the Log In link to return to your account and access
+          the features available to your account.
+        </p>
+      </details>
+
+      <details class="faq-item">
+        <summary>How do I get help?</summary>
+        <p>
+          Contact the MicroEarn support team using the verified contact
+          details provided by the platform.
+        </p>
+      </details>
+
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="home-footer">
-    <div class="footer-contact">
-      <a href="tel:+254769132565">📞 0769 132 565</a>
-      <a href="mailto:john60.michael@gmail.com">✉️ john60.michael@gmail.com</a>
+ ```html
+<footer class="home-footer">
+  <div class="footer-main">
+
+    <div class="footer-about">
+      <a routerLink="/" class="nav-brand footer-brand">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"
+             class="nav-logo">
+          <circle cx="32" cy="32" r="30" fill="#0F766E"/>
+          <path d="M20 34 L28 42 L44 24"
+                stroke="#F59E0B" stroke-width="5"
+                fill="none" stroke-linecap="round"
+                stroke-linejoin="round"/>
+        </svg>
+        <span class="nav-title">MicroEarn</span>
+      </a>
+
+      <p>
+        Discover digital tasks, complete activities, and manage
+        your progress in one convenient place.
+      </p>
     </div>
+
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <a routerLink="/">Home</a>
+      <a href="#features">Explore Tasks</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#faq">FAQs</a>
+      <a routerLink="/login">Log In</a>
+      <a routerLink="/register">Sign Up</a>
+    </div>
+
+    <div class="footer-contact">
+      <h4>Contact Us</h4>
+
+      <a href="tel:+254769132565">
+        <span>☎</span>
+        <span>0769 132 565</span>
+      </a>
+
+      <a href="mailto:john60.michael@gmail.com">
+        <span>✉</span>
+        <span>john60.michael@gmail.com</span>
+      </a>
+
+      <p>Have a question? Get in touch with us.</p>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
     <p>&copy; 2026 MicroEarn. All Rights Reserved.</p>
-  </footer>
+    <a routerLink="/login">Access Your Account →</a>
+  </div>
+</footer>
+```
 
 </div>
+```

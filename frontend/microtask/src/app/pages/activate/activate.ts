@@ -22,6 +22,19 @@ export class ActivateComponent implements OnInit, OnDestroy {
 
   constructor(private authService: AuthService, private router: Router, private cdr: ChangeDetectorRef) {}
 
+  retry(): void {
+    if (this.tillNumber) {
+      // Payment details already loaded, so just return to the form
+      this.status = 'idle';
+      this.errorMessage = '';
+      this.cdr.detectChanges();
+    } else {
+      this.status = 'loading';
+      this.cdr.detectChanges();
+      this.ngOnInit();
+    }
+  }
+
   ngOnInit(): void {
     this.authService.getPayInfo().subscribe({
       next: (res) => {

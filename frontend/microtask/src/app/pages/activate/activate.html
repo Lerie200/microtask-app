@@ -18,6 +18,8 @@
     <div class="my-3 p-3" style="background: #F8FAFC; border-radius: 10px; border: 1px solid #E2E8F0;">
       <div class="text-muted" style="font-size: 0.85rem;">Till Number</div>
       <div class="fw-bold" style="font-size: 1.4rem; color: var(--brand-primary);">{{ tillNumber }}</div>
+          <div class="text-muted" style="font-size: 0.85rem;">Name</div>
+          <div class="fw-bold" style="font-size: 1.2rem; color: var(--brand-primary);">Umu Ali Shahib</div>
       <div class="text-muted mt-2" style="font-size: 0.85rem;">Amount</div>
       <div class="fw-bold" style="font-size: 1.2rem; color: var(--brand-highlight);">KSh {{ amount }}</div>
     </div>
@@ -43,14 +45,24 @@
     </button>
   </div>
 
-  <div *ngIf="status === 'waiting'" class="py-3">
-    <div class="spinner-border mb-3" style="color: var(--brand-primary);" role="status"></div>
-    <p class="text-muted">You'll be directed soon — waiting for approval...</p>
+    <div *ngIf="status === 'waiting'" class="py-3">
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="width: 56px; height: 56px;" class="mb-3">
+      <circle cx="32" cy="32" r="30" fill="#0F766E" />
+      <path d="M20 34 L28 42 L44 24" stroke="#FFFFFF" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    <h5 style="color: var(--brand-primary); font-weight: 700;">Payment submitted</h5>
+    <p class="text-muted mb-0">
+      You'll be directed to your tasks automatically once your application is approved.
+    </p>
   </div>
 
-  <div *ngIf="status === 'error' && !tillNumber" class="alert alert-danger py-2">
+  <div *ngIf="status === 'error'" class="alert alert-danger py-2">
     {{ errorMessage }}
-    <button class="btn btn-sm btn-brand mt-2 w-100" (click)="ngOnInit()">Try Again</button>
+    <button class="btn btn-sm btn-brand mt-2 w-100" (click)="retry()">Try Again</button>
   </div>
+
+
+
+
 </div>
 </div>
